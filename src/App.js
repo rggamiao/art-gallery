@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import { useSelector, useDispatch, connect} from 'react-redux'
+
 
 function App() {
   return (
@@ -23,4 +25,16 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  objectId: state.data.objectId
+})
+
+useEffect(() => {
+  dispatch(fetchData())
+}, [props.objectId, dispatch])
+
+export default connect(mapStateToProps)(App)
+
+
+
+
