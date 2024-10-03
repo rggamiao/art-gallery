@@ -1,40 +1,45 @@
-import logo from './logo.svg';
 import './App.css';
-import { useSelector, useDispatch, connect} from 'react-redux'
+import { useSelector, useDispatch, connect } from 'react-redux'
+import { clearData, fetchData, incrementId, decrementId, inputId } from './features/dataSlice'
+import { useEffect } from 'react';
+
+function App(props) {
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.data)
+
+  const renderImg = () => {
+    if(data.apiData) {
+      return <img style={{'width': '100vw'}} src={data.apiData.primaryImage} alt={data.apiData.title} />
+    } else {
+      return <p>image here</p>
+    }
+  }
+
+  useEffect(() => {
+    dispatch(fetchData())
+  }, [props.objectId, dispatch])
 
 
-function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Welcome to My React App!</h1>
-        <p>
-          This is my first React application. Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+        <button onClick={() => dispatch(fetchData())}>Thunk!</button>
+        <button onClick={() => dispatch(clearData())}>Clear</button>
+        <button onClick={() => dispatch(incrementId())}>Next</button>
+        <button onClick={() => dispatch(decrementId())}>Back</button>
+      </div>
+      <input value={ data.objectId } onChange={(e) => {
+        dispatch(inputId(Number(e.target.value)))
+      }} />
+      <div>
+        {data.objectId}
+        {renderImg()}
+      </div>
     </div>
   );
 }
 
-const mapStateToProps = (state) => ({
-  objectId: state.data.objectId
-})
 
-useEffect(() => {
-  dispatch(fetchData())
-}, [props.objectId, dispatch])
+const mapStateToProps = (state, ownProps) => ({ objectId: state.data.objectId })
 
-export default connect(mapStateToProps)(App)
-
-
-
-
+export default connect(mapStateToProps)(App);
